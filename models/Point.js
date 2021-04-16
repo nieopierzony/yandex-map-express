@@ -12,6 +12,10 @@ module.exports = sequelize => {
         type: DataTypes.DOUBLE,
         allowNull: false,
       },
+      type: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     { tableName: 'points', createdAt: false, updatedAt: false },
   );

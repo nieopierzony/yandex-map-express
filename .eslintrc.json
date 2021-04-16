@@ -1,12 +1,13 @@
 {
   "extends": ["eslint:recommended", "plugin:prettier/recommended"],
-  "plugins": ["import"],
+  "plugins": ["import", "ejs"],
   "parserOptions": {
     "ecmaVersion": 2020
   },
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "rules": {
     "import/order": [

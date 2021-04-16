@@ -3,83 +3,23 @@
   <head>
     <title>Yandex Maps</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style type="text/css">
-      #map {
-        height: 100%;
-        width: 100%;
-        top: 0;
-        left: 0;
-        position: absolute;
-        z-index: 200;
-      }
-    </style>
-    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
-    <script type="text/javascript">
-      function getUserLocation(map, points) {
-        if (window.navigator.geolocation) {
-          window.navigator.geolocation.getCurrentPosition(
-            pos => {
-              const { latitude, longitude } = pos.coords;
-              map.geoObjects.add(new ymaps.Placemark([latitude, longitude], {}, { preset: 'islands#circleIcon' }));
-
-              const dinstances = [];
-              points.forEach(p => {
-                dinstances.push(+(ymaps.coordSystem.geo.getDistance(p, [latitude, longitude]) / 1000).toFixed(2));
-              });
-
-              const shortestDistance = dinstances.reduce((a, b) => Math.min(a, b));
-              const shortestPoint = points[dinstances.indexOf(shortestDistance)];
-
-              for (let i = 0; i < map.geoObjects.getLength(); i++) {
-                const obj = map.geoObjects.get(i);
-                const preset = obj.options.get('preset');
-                const bounds = obj.geometry.getCoordinates();
-                if (preset === 'islands#redIcon' && bounds === shortestPoint) {
-                  const polyline = new ymaps.Polyline(
-                    [bounds, [latitude, longitude]],
-                    {},
-                    { strokeWidth: 3, strokeColor: '#0000FF' },
-                  );
-                  map.geoObjects.add(polyline);
-
-                  map.geoObjects.set(
-                    i,
-                    new ymaps.Placemark(
-                      bounds,
-                      { iconCaption: 'Ближайшая точка' },
-                      { preset: 'islands#circleDotIcon' },
-                    ),
-                    obj,
-                  );
-                }
-              }
-            },
-            err => {
-              alert('Необходимо разрешить доступ к геоданным ');
-            },
-          );
-        }
-      }
-
-      ymaps.ready(async () => {
-        const points = '<%=points.map(({ lat, lng }) => `${lat}:${lng}`) %>'
-          .split(',')
-          .map(i => i.split(':'))
-          .map(i => i.map(j => +j));
-        console.log(points);
-        const map = new ymaps.Map('map', {
-          center: [47.221809, 39.720261],
-          zoom: 14,
-          controls: [],
-        });
-
-        points.forEach(p => map.geoObjects.add(new ymaps.Placemark(p, {}, { preset: 'islands#redIcon' })));
-        getUserLocation(map, points);
-      });
-    </script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, maximum-scale=1" />
+    <link href="https://yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="./css/style.css" rel="stylesheet" />
   </head>
 
   <body>
-    <div id="map" style="width: 100%; height: 100%"></div>
+    <div class="container">
+      <div id="map"></div>
+    </div>
+
+    <script
+      src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=0f3b5332-68ee-44a7-9131-5377dcc33ab1"
+      type="text/javascript"
+    ></script>
+    <script type="text/javascript">
+      window.points = JSON.parse('<%-JSON.stringify(points)%>');
+    </script>
+    <script src="js/map.js" type="text/javascript"></script>
   </body>
 </html>

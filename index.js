@@ -14,12 +14,12 @@ sequelize
   .then(() => console.log('Connection has been established successfully.'))
   .catch(err => console.error('Unable to connect to the database:', err));
 
-app.use(express.static(path.join(__dirname, 'src/views')));
+app.use(express.static(path.join(__dirname, 'views')));
 app.set('view engine', 'ejs');
 
 app.get('/', async (req, res) => {
-  const points = await Point.findAll({ order: [sequelize.fn('RANDOM')], limit: 5 });
-  res.render('index.ejs', { points: points.map(({ lat, lng }) => ({ lat, lng })) });
+  const points = await Point.findAll({ order: [sequelize.fn('RANDOM')], limit: 10 });
+  res.render('index.ejs', { points: points.map(({ lat, lng, type }) => ({ type, coords: [lat, lng] })) });
 });
 
 app.listen(3000, () => {
